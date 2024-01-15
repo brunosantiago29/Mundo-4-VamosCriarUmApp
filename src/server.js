@@ -1,27 +1,15 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const cors = require('cors');
 const sqlite3 = require('sqlite3').verbose();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(cors());
 app.use(bodyParser.json());
 
-const db = new sqlite3.Database('./clientes.db');
+const db = new sqlite3.Database('./dados.db');
 
-db.run(`
-  CREATE TABLE IF NOT EXISTS clientes (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    nome TEXT,
-    endereco TEXT,
-    contato TEXT,
-    email TEXT,
-    imagemUrl TEXT
-  )
-`);
-
+// Rota para salvar um novo cliente
 app.post('/api/clientes', (req, res) => {
   const { nome, endereco, contato, email, imagemUrl } = req.body;
 
@@ -40,6 +28,7 @@ app.post('/api/clientes', (req, res) => {
   stmt.finalize();
 });
 
+// Rota para obter todos os clientes
 app.get('/api/clientes', (req, res) => {
   db.all('SELECT * FROM clientes', (err, rows) => {
     if (err) {
